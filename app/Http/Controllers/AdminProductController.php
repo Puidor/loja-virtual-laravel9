@@ -7,6 +7,7 @@ use App\Models\Product;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\RedirectResponse;
+use App\Http\Requests\ProductStoreRequest;
 
 class AdminProductController extends Controller
 {
@@ -23,17 +24,10 @@ class AdminProductController extends Controller
     }
 
     //Recebe a requisição do formulário de edição (PUT)
-    public function update(Request $request, Product $product)
+    public function update(ProductStoreRequest $request, Product $product)
     {
         
-        $input = $request->validate([
-            'name' => 'required|max:255',
-            'description' => 'string|nullable',
-            'price' => 'string|required',
-            'stock' => 'integer|nullable',
-            // 'cover' => 'file|nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'cover' => 'file|nullable',
-        ]);
+        $input = $request->validated();
 
         if(!empty($input['cover']) && $input['cover']->isValid()){
             Storage::delete($product->cover ?? '');
@@ -55,23 +49,9 @@ class AdminProductController extends Controller
     }
 
     //Recebe a requisição do formulário de criação (POST)
-    public function store(Request $request)
+    public function store(ProductStoreRequest $request)
     {
-        $input = $request->validate([
-            'name' => 'required|max:255',
-            'description' => 'string|nullable',
-            'price' => 'string|required',
-            'stock' => 'integer|nullable',
-            // 'cover' => 'file|nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'cover' => 'file|nullable',
-        ], [
-            'name.required' => 'O nome do produto é obrigatório',
-            'name.max' => 'O nome do produto deve ter no máximo 255 caracteres',
-            'price.required' => 'O preço do produto é obrigatório',
-            'stock.integer' => 'O estoque do produto deve ser um número',
-            'cover.file' => 'O arquivo deve ser uma imagem',
-            'cover.max' => 'A imagem deve ter no máximo 2MB',
-        ]);
+        $input = $request->validated();
 
         $input['slug'] = Str::slug($input['name']);
 
