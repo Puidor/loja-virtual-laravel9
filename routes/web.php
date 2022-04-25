@@ -21,4 +21,10 @@ Route::get('/produto/{product:slug}', [ProductController::class, 'show'])->name(
 
 // Admin
 Route::get('/admin/produtos', [AdminProductController::class, 'index'])->name('admin.products');
-Route::get('/admin/produtos/edit', [AdminProductController::class, 'edit'])->name('admin.product.edit');
+
+Route::get('/admin/produtos/{product}/edit', [AdminProductController::class, 'edit'])->name('admin.product.edit');
+Route::put('/admin/produtos/{product}', [AdminProductController::class, 'update'])->name('admin.product.update');
+
+Route::get('/admin/produtos/create', [AdminProductController::class, 'create'])->name('admin.product.create');
+Route::post('/admin/produtos', [AdminProductController::class, 'store'])->name('admin.product.store');
+
