@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\RedirectResponse;
 
 class AdminProductController extends Controller
 {
@@ -15,15 +17,35 @@ class AdminProductController extends Controller
     }
 
     //Mostrar a página de Editar
-    public function edit()
+    public function edit(Product $product)
     {
-        return view('admin.product_edit');
+        return view('admin.product_edit', compact('product'));
     }
 
     //Recebe a requisição do formulário de edição (PUT)
-    public function update()
+    public function update(Request $request, Product $product)
     {
+        
+        $input = $request->validate([
+            'name' => 'required|max:255',
+            'description' => 'string|nullable',
+            'price' => 'string|required',
+            'stock' => 'integer|nullable',
+            // 'cover' => 'file|nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'cover' => 'file|nullable',
+        ]);
 
+        if(!empty($input['cover']) && $input['cover']->isValid()){
+            Storage::delete($product->cover ?? '');
+            $file = $input['cover'];
+            $path = $file->store('public');
+            $input['cover'] = $path;
+        }
+
+        $product->fill($input);
+        $product->save();
+
+        return redirect()->route('admin.products');
     }
 
     //Mostrar a página de Criar
@@ -63,4 +85,21 @@ class AdminProductController extends Controller
 
         return redirect()->route('admin.products');
     }
+
+    //Deletar um produto
+    public function destroy(Product $product)
+    {
+        $product->delete();
+        Storage::delete($product->cover ?? '');
+        return redirect()->route('admin.products');
+    }
+
+    public function destroyImage(Product $product){
+        Storage::delete($product->cover);
+        $product->cover = null;
+        $product->save();
+
+        return redirect()->back();
+    }
+
 }
