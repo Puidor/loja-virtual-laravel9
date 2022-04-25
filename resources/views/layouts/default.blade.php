@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta
@@ -10,7 +10,7 @@
         http-equiv="X-UA-Compatible"
         content="ie=edge"
     >
-    <title>Document</title>
+    <title>Loja Virtual</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
