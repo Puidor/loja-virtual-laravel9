@@ -7,9 +7,9 @@ use App\Models\Product;
 
 class HomeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::all();
+        $products = Product::where('name', 'like', '%'. $request->search . '%' )->get();
         return view('home', ['products' => $products]);
     }
 }
